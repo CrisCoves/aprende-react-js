@@ -30,6 +30,6 @@
   background: red;
 }
 
-.Searcher button .circle:before {
+.Searcher button .sk-circle div:before {
   background-color: #fff;
 }

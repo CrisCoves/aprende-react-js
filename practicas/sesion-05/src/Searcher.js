@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import './Searcher.css';
+import Button from './Button.js';
 
 
 export default class Searcher extends Component {
@@ -39,8 +40,17 @@ export default class Searcher extends Component {
     render () {
         return (
             <form className='Searcher' onSubmit={this.handleSubmit}>
-                <input type="text" onChange={this.handleChange}/>
-                <button>Go</button>
+                {/* deshabilitamos el input cuando este cargando (spinner)  */}
+                <input
+                       disabled={this.props.isLoading}
+                       onChange={this.handleChange}
+                       type="text"/>
+
+                {/* creamos un componente Button al que le vamos a poder pasar diferentes props */}
+                <Button
+                    isLoading={this.props.isLoading}
+                    label="Search"
+                />
             </form>
         )
     }
@@ -48,7 +58,8 @@ export default class Searcher extends Component {
 
 
 Searcher.propTypes = {
-    onSubmit: PropTypes.func
+    isLoading: PropTypes.bool,
+    onSubmit: PropTypes.func.isRequired
 }
 
 /****

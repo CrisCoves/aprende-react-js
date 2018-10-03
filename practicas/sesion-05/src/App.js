@@ -19,7 +19,8 @@ export default class App extends Component {
         this.state = {
             // dummyData es un array que tiene los resultados como los esperamos
             results: [],
-            initialState: true
+            initialState: true,
+            isLoading: false
         }
 
         // es una buena práctica ver las funciones q van a utilizar el this y bindearlas en el constructor
@@ -27,10 +28,10 @@ export default class App extends Component {
     }
 
     handleSubmit ( textToSearch ) {
-        //e.preventDefault(); => quitamos esto y sustituimos e por el parámetro textToSearch
+        // e.preventDefault(); => quitamos esto y sustituimos e por el parámetro textToSearch
         // despues de crear el componente Searcher, que nos permitirá poder utilizar el fetch de manera más modular.
         // este handleSubmit se lo vamos a pasar ahora a Searcher como prop
-        this.setState( { initialState: false } );
+        this.setState( { initialState: false, isLoading: true } );
         // vamos a querer buscar algo cuando hagamos un submit.
         // vamos a hacer un fetch de un recurso
 
@@ -41,7 +42,8 @@ export default class App extends Component {
         fetch( FETCH_URL )
             .then( res => res.json() )
             .then( res => {
-                this.setState( { results: res.data.results } );
+                // desactivar el spinner cuando obtenemos la respuesta
+                this.setState( { isLoading: false, results: res.data.results } );
             } )
     }
 
@@ -56,6 +58,7 @@ export default class App extends Component {
                 }
 
                 <Searcher
+                    isLoading={this.state.isLoading}
                     onSubmit={this.handleSubmit}
                 />
 
