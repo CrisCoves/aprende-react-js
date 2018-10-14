@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
+import lscache from 'lscache';
+
 import './App.css';
 
 //import dummyData from './dummyData.js';
 import Logo from './Logo.js';
-import Card from './Card.js';
+import Card from './Card/Card.js';
 import Searcher from './Searcher.js';
 
 // si te registras en la  API de Marvel, puedes acceder a la API sin ningún problema, te registras y te da una API key
@@ -18,13 +20,19 @@ export default class App extends Component {
         // es una buena práctica definir los estados iniciales
         this.state = {
             // dummyData es un array que tiene los resultados como los esperamos
-            results: [],
             initialState: true,
-            isLoading: false
+            isLoading: false,
+            favs: [],
+            results: []
         }
 
         // es una buena práctica ver las funciones q van a utilizar el this y bindearlas en el constructor
         this.handleSubmit = this.handleSubmit.bind( this );
+    }
+
+    componentDidMount () {
+        const favs = lscache.get( 'favs' ) || [];
+        this.setState( { favs: favs } );
     }
 
     handleSubmit ( textToSearch ) {
@@ -52,15 +60,16 @@ export default class App extends Component {
             <div className='container' >
                <Logo isCentered />
 
-                {/* mostramos este texto solo si no se ha hecho una búsqueda */}
-                { this.state.initialState &&
-                    <p className='has-text-centered'>Por favor, usa el formulario para buscar el personaje</p>
-                }
 
                 <Searcher
                     isLoading={this.state.isLoading}
                     onSubmit={this.handleSubmit}
                 />
+
+                {/* mostramos este texto solo si no se ha hecho una búsqueda */}
+                { this.state.initialState &&
+                <p className='has-text-centered'>Por favor, usa el formulario para buscar el personaje</p>
+                }
 
                 {/* cogemos el estado y hacemos hijos dinamicos a partir de los datos del array
                  No olvidar que cada hijo del array, cuando lo estamos iterando, debe tener una 'key' unica */}
@@ -68,7 +77,17 @@ export default class App extends Component {
                 {/* en el render estamos diciendo que haga un mapeo del estado de results. Con lo que cada vez que el estado cambia,
                  se vuelve a renderizar */}
                  <div className='results' >
-                     {this.state.results.map( item => <Card item={item} key={item.id}/> )}
+                     {this.state.results.map( item => {
+                         return (
+                             <Card
+                                 /* isFav={this.state.favs.find( id => item.id === id )}
+                                 el 'find()' nos devuelve justo el valor que estamos buscando, mientras que el
+                                 'some()' nos devuelve un booleano, que es lo que estamos buscando aqui */
+                                 isFav={this.state.favs.some( id => item.id === id )}
+                                 item={item}
+                                 key={item.id} />
+                             )
+                     } )}
                  </div>
             </div>
         );
